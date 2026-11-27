@@ -1,8 +1,8 @@
-name: SandStrike Android APK
+name: SandStrike APK
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -13,23 +13,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          lfs: true
 
-      - name: Build Android APK
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      - uses: actions/setup-java@v4
         with:
-          unityVersion: 2020.3.24f1
-          targetPlatform: Android
-          projectPath: .
-          buildName: SandStrike
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: Upload APK
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
+
+      - name: Build debug APK
+        run: cd android && gradle assembleDebug --no-daemon
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: SandStrike-APK
-          path: build/Android/*.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Publish to Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          APK=android/app/build/outputs/apk/debug/app-debug.apk
+          if gh release view v1.0 >/dev/null 2>&1; then
+            gh release upload v1.0 "$APK" --clobber
+          else
+            gh release create v1.0 "$APK" --title "SandStrike 1.0" --generate-notes
+          fi

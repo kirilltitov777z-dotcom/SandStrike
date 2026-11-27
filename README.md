@@ -19,11 +19,17 @@
 Вьюмодели грузятся из `Assets/Resources/Weapons` — это FBX-префабы из базового репозитория (GitHub).
 Персонаж, боты и нож-бабочка собраны процедурно из примитивов: так анимация и скины работают без внешних зависимостей.
 
-## Запуск
+## APK для телефона
 
-Открой папку в Unity **2020.3.24f1**, дождись импорта и нажми Play в любой сцене — `SandBootstrap` сам перехватит управление.
-Для Android: `File > Build Settings > Android > Build`. Готовый APK можно собрать через GitHub Actions (workflow `SandStrike Android APK`);
-для этого в настройках репозитория нужны секреты `UNITY_LICENSE`, `UNITY_EMAIL`, `UNITY_PASSWORD`.
+Готовый APK собирается workflow **SandStrike APK** и публикуется в [Releases](https://github.com/kirilltitov777z-dotcom/SandStrike/releases) как `app-debug.apk`.
+Исходник Android-обёртки и вся игра (HTML/JS + Three.js) лежат в `android/app/src/main/assets`.
+Сборка не требует Unity и лицензии: `cd android && gradle assembleDebug`.
+
+## Unity-исходник
+
+Папка `Assets/SandStrike` — версия на Unity 2020.3.24f1, собранная на базе FPS Microgame.
+Открой папку в Unity, нажми Play в любой сцене — `SandBootstrap` перехватит управление.
+Сборка Unity-версии через Actions (`unity-build.yml`) требует секретов `UNITY_LICENSE`, `UNITY_EMAIL`, `UNITY_PASSWORD`.
 
 ## Благодарности
 
